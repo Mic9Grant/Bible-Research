@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Bible Books Reference</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1:after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 4px;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            border-radius: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        #searchInput:focus {
+            outline: none;
+            box-shadow: 0 5px 20px rgba(52, 152, 219, 0.5);
+        }
+
+        .testament-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .testament {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .testament:hover {
+            transform: translateY(-5px);
+        }
+
+        .testament-header {
+            padding: 20px;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .testament-header h2 {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category {
+            margin: 15px;
+            border: 1px solid #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .category-header {
+            padding: 15px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .category-header h3 {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .book-list {
+            padding: 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .book {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid #3498db;
+        }
+
+        .book:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #e74c3c;
+        }
+
+        .book h4 {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .book p {
+            color: #7f8c8d;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 30px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            color: #ecf0f1;
+            margin-top: 20px;
+        }
+
+        .copyright {
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+        
+        .collapsed + .testament-content, .collapsed + .book-list {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .testament-container {
+                flex-direction: column;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .book-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .highlight {
+            background-color: #ffeaa7;
+            padding: 0 3px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-bible"></i> Complete Bible Books Reference</h1>
+            <p class="subtitle">Interactive guide to all 66 books of the Bible with summaries</p>
+
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search for a book or topic...">
+            </div>
+        </header>
+
+        <div class="testament-container">
+            <div class="testament">
+                <div class="testament-header" onclick="toggleSection(this, '.testament-content')">
+                    <h2><i class="fas fa-scroll"></i> Old Testament <span class="book-count">(39 Books)</span></h2>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+
+                <div class="testament-content">
+                    <div class="category">
+                        <div class="category-header" onclick="toggleSection(this, '.book-list')">
+                            <h3><i class="fas fa-mountain"></i> The Pentateuch (Torah/Law)</h3>
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                        </div>
+                        <div class="book-list">
+                            <div class="book">
+                                <h4>Genesis</h4>
+                                <p>The book of beginnings, covering creation, the fall of humanity, and the early history of God's people through Abraham, Isaac, Jacob, and Joseph.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Exodus</h4>
+                                <p>The story of Israel's deliverance from Egyptian slavery under Moses' leadership, including the giving of the Ten Commandments at Mount Sinai.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Leviticus</h4>
+                                <p>A detailed guide to worship, sacrificial system, and holy living for the Israelite priests and people, emphasizing ritual purity and moral conduct.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Numbers</h4>
+                                <p>Chronicles Israel's 40-year wilderness wandering, including censuses, laws, and the challenges faced before entering the Promised Land.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Deuteronomy</h4>
+                                <p>Moses' final speeches to Israel, restating the law and covenant before his death and their entry into Canaan.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-header" onclick="toggleSection(this, '.book-list')">
+                            <h3><i class="fas fa-landmark"></i> Historical Books</h3>
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                        </div>
+                        <div class="book-list">
+                            <div class="book">
+                                <h4>Joshua</h4>
+                                <p>The conquest and division of the Promised Land under Joshua's leadership after Moses' death.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Judges</h4>
+                                <p>A cycle of Israel's spiritual decline, oppression by enemies, and deliverance through various judges over several centuries.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Ruth</h4>
+                                <p>A beautiful story of loyalty and redemption following a Moabite woman who becomes part of Israel and an ancestor of King David.</p>
+                            </div>
+                            <div class="book">
+                                <h4>1 Samuel</h4>
+                                <p>The transition from judges to monarchy, featuring Samuel the prophet, Saul the first king, and young David's rise.</p>
+                            </div>
+                            <div class="book">
+                                <h4>2 Samuel</h4>
+                                <p>The reign of King David, his victories, his sin with Bathsheba, and the consequences that followed.</p>
+                            </div>
+                            <div class="book">
+                                <h4>1 Kings</h4>
+                                <p>Solomon's reign and the division of Israel into northern and southern kingdoms, with various kings' stories.</p>
+                            </div>
+                            <div class="book">
+                                <h4>2 Kings</h4>
+                                <p>Continued history of the divided kingdom, featuring prophets like Elijah and Elisha, ending with both kingdoms' exile.</p>
+                            </div>
+                            <div class="book">
+                                <h4>1 Chronicles</h4>
+                                <p>A retelling of Israel's history from Adam through David's reign, emphasizing David's positive legacy and temple preparations.</p>
+                            </div>
+                            <div class="book">
+                                <h4>2 Chronicles</h4>
+                                <p>Focuses on the southern kingdom of Judah from Solomon through the Babylonian exile, highlighting temple worship and reform movements.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Ezra</h4>
+                                <p>The return of Jewish exiles from Babylon and the rebuilding of the temple under Ezra's spiritual leadership.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Nehemiah</h4>
+                                <p>The rebuilding of Jerusalem's walls and spiritual renewal under Nehemiah's civil leadership.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Esther</h4>
+                                <p>A Jewish woman becomes queen of Persia and saves her people from genocide, though God is never explicitly mentioned.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-header" onclick="toggleSection(this, '.book-list')">
+                            <h3><i class="fas fa-brain"></i> Wisdom Literature</h3>
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                        </div>
+                        <div class="book-list">
+                            <div class="book">
+                                <h4>Job</h4>
+                                <p>Explores the problem of suffering through the story of a righteous man who loses everything but maintains faith in God.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Psalms</h4>
+                                <p>A collection of 150 songs and prayers expressing the full range of human emotion in relationship with God.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Proverbs</h4>
+                                <p>Practical wisdom for daily living, emphasizing the fear of the Lord as the beginning of wisdom.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Ecclesiastes</h4>
+                                <p>A philosophical reflection on life's meaning, concluding that fearing God and keeping His commandments is humanity's whole duty.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Song of Solomon</h4>
+                                <p>A poetic celebration of romantic love between a man and woman, often interpreted as an allegory of God's love for His people.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-header" onclick="toggleSection(this, '.book-list')">
+                            <h3><i class="fas fa-fire"></i> Major Prophets</h3>
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                        </div>
+                        <div class="book-list">
+                            <div class="book">
+                                <h4>Isaiah</h4>
+                                <p>Prophecies of judgment and salvation, including many messianic passages about the coming Servant of the Lord.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Jeremiah</h4>
+                                <p>The "weeping prophet" warns of Jerusalem's destruction while promising future restoration and a new covenant.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Lamentations</h4>
+                                <p>Five poems mourning the destruction of Jerusalem and the temple, traditionally attributed to Jeremiah.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Ezekiel</h4>
+                                <p>Visions and prophecies during the Babylonian exile, emphasizing God's holiness, judgment, and eventual restoration of Israel.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Daniel</h4>
+                                <p>Stories of faith under foreign rule and apocalyptic visions of future kingdoms and God's eternal kingdom.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-header" onclick="toggleSection(this, '.book-list')">
+                            <h3><i class="fas fa-bullhorn"></i> Minor Prophets</h3>
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                        </div>
+                        <div class="book-list">
+                            <div class="book">
+                                <h4>Hosea</h4>
+                                <p>Uses the prophet's marriage to an unfaithful wife as a metaphor for God's relationship with unfaithful Israel.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Joel</h4>
+                                <p>Describes a locust plague as a sign of coming judgment and calls for repentance, prophesying the outpouring of God's Spirit.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Amos</h4>
+                                <p>A shepherd-prophet condemns social injustice and religious hypocrisy, emphasizing God's demand for justice.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Obadiah</h4>
+                                <p>The shortest Old Testament book, prophesying judgment against Edom for their treatment of Israel.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Jonah</h4>
+                                <p>A reluctant prophet learns about God's mercy toward repentant enemies, including the great city of Nineveh.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Micah</h4>
+                                <p>Denounces injustice while prophesying the Messiah's birth in Bethlehem and God's requirements: justice, mercy, and humility.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Nahum</h4>
+                                <p>Prophesies the destruction of Nineveh as judgment for Assyria's cruelty and oppression.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Habakkuk</h4>
+                                <p>A prophet questions God about injustice and learns to live by faith despite difficult circumstances.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Zephaniah</h4>
+                                <p>Warns of coming judgment but promises restoration for a humble remnant who trust in the Lord.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Haggai</h4>
+                                <p>Encourages the returned exiles to prioritize rebuilding the temple over their own comfort and prosperity.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Zechariah</h4>
+                                <p>Visions and prophecies encouraging temple rebuilding while looking forward to the coming Messiah and His kingdom.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Malachi</h4>
+                                <p>The final Old Testament book, calling for spiritual renewal and promising the coming of Elijah before the "great and dreadful day of the Lord."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testament">
+                <div class="testament-header" onclick="toggleSection(this, '.testament-content')">
+                    <h2><i class="fas fa-cross"></i> New Testament <span class="book-count">(27 Books)</span></h2>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+
+                <div class="testament-content">
+                    <div class="category">
+                        <div class="category-header" onclick="toggleSection(this, '.book-list')">
+                            <h3><i class="fas fa-dove"></i> The Gospels</h3>
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                        </div>
+                        <div class="book-list">
+                            <div class="book">
+                                <h4>Matthew</h4>
+                                <p>Presents Jesus as the promised Messiah and King, emphasizing His fulfillment of Old Testament prophecies, written primarily for Jewish readers.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Mark</h4>
+                                <p>The shortest and likely earliest Gospel, portraying Jesus as the suffering Servant who came to serve and give His life as a ransom.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Luke</h4>
+                                <p>A detailed, orderly account emphasizing Jesus' compassion for outcasts, women, and Gentiles, presenting Him as the perfect man and Savior.</p>
+                            </div>
+                            <div class="book">
+                                <h4>John</h4>
+                                <p>Focuses on Jesus' divine nature with seven "I Am" statements and signs, written to prove that Jesus is the Christ, the Son of God.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-header" onclick="toggleSection(this, '.book-list')">
+                            <h3><i class="fas fa-church"></i> Church History</h3>
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                        </div>
+                        <div class="book-list">
+                            <div class="book">
+                                <h4>Acts</h4>
+                                <p>The history of the early church from Jesus' ascension through Paul's ministry, showing the gospel's spread from Jerusalem to Rome.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-header" onclick="toggleSection(this, '.book-list')">
+                            <h3><i class="fas fa-envelope"></i> Paul's Letters</h3>
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                        </div>
+                        <div class="book-list">
+                            <div class="book">
+                                <h4>Romans</h4>
+                                <p>Paul's systematic explanation of the gospel, covering sin, salvation by faith, sanctification, and Christian living.</p>
+                            </div>
+                            <div class="book">
+                                <h4>1 Corinthians</h4>
+                                <p>Addresses various problems in the Corinthian church, including divisions, immorality, spiritual gifts, and the resurrection.</p>
+                            </div>
+                            <div class="book">
+                                <h4>2 Corinthians</h4>
+                                <p>Paul defends his apostolic ministry and encourages the church through his own sufferings and God's comfort.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Galatians</h4>
+                                <p>Strongly defends salvation by faith alone against those who would add works of the law to the gospel.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Ephesians</h4>
+                                <p>Emphasizes the church's unity and believers' position "in Christ," with practical instructions for Christian living.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Philippians</h4>
+                                <p>A joyful letter written from prison, encouraging contentment, unity, and having the mind of Christ.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Colossians</h4>
+                                <p>Combats false teaching by emphasizing Christ's supremacy and sufficiency for salvation and spiritual growth.</p>
+                            </div>
+                            <div class="book">
+                                <h4>1 Thessalonians</h4>
+                                <p>Encourages a young church in their faith and provides teaching about Christ's second coming.</p>
+                            </div>
+                            <div class="book">
+                                <h4>2 Thessalonians</h4>
+                                <p>Corrects misunderstandings about Christ's return and encourages perseverance through persecution.</p>
+                            </div>
+                            <div class="book">
+                                <h4>1 Timothy</h4>
+                                <p>Instructions for young pastor Timothy on church leadership, false teaching, and pastoral ministry.</p>
+                            </div>
+                            <div class="book">
+                                <h4>2 Timothy</h4>
+                                <p>Paul's final letter, encouraging Timothy to remain faithful and continue preaching the Word despite opposition.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Titus</h4>
+                                <p>Guidance for establishing church leadership and maintaining sound doctrine in Crete.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Philemon</h4>
+                                <p>A personal letter asking Philemon to forgive and receive back his runaway slave Onesimus as a brother in Christ.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-header" onclick="toggleSection(this, '.book-list')">
+                            <h3><i class="fas fa-book-open"></i> General Letters</h3>
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                        </div>
+                        <div class="book-list">
+                            <div class="book">
+                                <h4>Hebrews</h4>
+                                <p>Demonstrates Christ's superiority to Old Testament institutions and encourages perseverance in faith despite persecution.</p>
+                            </div>
+                            <div class="book">
+                                <h4>James</h4>
+                                <p>Emphasizes practical Christianity, showing that genuine faith produces good works and righteous living.</p>
+                            </div>
+                            <div class="book">
+                                <h4>1 Peter</h4>
+                                <p>Encourages Christians suffering persecution to follow Christ's example and live holy lives as strangers in this world.</p>
+                            </div>
+                            <div class="book">
+                                <h4>2 Peter</h4>
+                                <p>Warns against false teachers and encourages spiritual growth while affirming the certainty of Christ's return.</p>
+                            </div>
+                            <div class="book">
+                                <h4>1 John</h4>
+                                <p>Tests of genuine faith including love for others, obedience to God's commands, and belief in Jesus as God's Son.</p>
+                            </div>
+                            <div class="book">
+                                <h4>2 John</h4>
+                                <p>A brief warning against false teachers who deny Christ's incarnation, emphasizing truth and love.</p>
+                            </div>
+                            <div class="book">
+                                <h4>3 John</h4>
+                                <p>Commends Gaius for his hospitality and warns against Diotrephes' prideful leadership.</p>
+                            </div>
+                            <div class="book">
+                                <h4>Jude</h4>
+                                <p>A strong warning against false teachers who have infiltrated the church, calling believers to contend for the faith.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-header" onclick="toggleSection(this, '.book-list')">
+                            <h3><i class="fas fa-eye"></i> Prophecy</h3>
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                        </div>
+                        <div class="book-list">
+                            <div class="book">
+                                <h4>Revelation</h4>
+                                <p>Apocalyptic visions revealing Christ's ultimate victory over evil, the final judgment, and the establishment of God's eternal kingdom.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p class="copyright">Bible Research &copy; 2025 Michael D. Grant</p>
+        </footer>
+    </div>
+
+    <script>
+        // Store original content of books for search functionality
+        const originalContent = {};
+        document.querySelectorAll('.book').forEach(book => {
+            const title = book.querySelector('h4').textContent;
+            const content = book.querySelector('p').textContent;
+            originalContent[title] = { title, content };
+        });
+
+        function toggleSection(element, contentSelector) {
+            const content = element.parentElement.querySelector(contentSelector);
+            const parent = element.parentElement;
+            
+            if (content.style.display === "none") {
+                content.style.display = "grid";
+                parent.classList.remove("collapsed");
+            } else {
+                content.style.display = "none";
+                parent.classList.add("collapsed");
+            }
+        }
+
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const books = document.querySelectorAll('.book');
+            let hasResults = false;
+
+            // Remove any previous "no results" message
+            const existingNoResults = document.querySelector('.no-results');
+            if (existingNoResults) {
+                existingNoResults.remove();
+            }
+
+            // Restore original content before searching
+            books.forEach(book => {
+                const titleElement = book.querySelector('h4');
+                const contentElement = book.querySelector('p');
+                const originalTitle = originalContent[titleElement.textContent] ? originalContent[titleElement.textContent].title : titleElement.textContent;
+                const originalContentText = originalContent[originalTitle] ? originalContent[originalTitle].content : contentElement.textContent;
+
+                titleElement.innerHTML = originalTitle;
+                contentElement.innerHTML = originalContentText;
+            });
+
+            // Perform the search
+            books.forEach(book => {
+                const titleElement = book.querySelector('h4');
+                const contentElement = book.querySelector('p');
+                const title = titleElement.textContent.toLowerCase();
+                const content = contentElement.textContent.toLowerCase();
+
+                if (title.includes(searchTerm) || content.includes(searchTerm)) {
+                    book.style.display = 'block';
+                    hasResults = true;
+
+                    // Highlight matching text
+                    if (searchTerm) {
+                        const regex = new RegExp(searchTerm, 'gi');
+                        titleElement.innerHTML = titleElement.innerHTML.replace(regex, match => `<span class="highlight">${match}</span>`);
+                        contentElement.innerHTML = contentElement.innerHTML.replace(regex, match => `<span class="highlight">${match}</span>`);
+                    }
+                } else {
+                    book.style.display = 'none';
+                }
+            });
+
+            // Show no results message if needed
+            if (!hasResults && searchTerm) {
+                const bookList = document.querySelector('.testament-container');
+                const message = document.createElement('div');
+                message.className = 'no-results';
+                message.textContent = 'No books found matching your search.';
+                bookList.appendChild(message);
+            }
+        });
+
+        // Initial setup on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all testament headers
+            const testamentHeaders = document.querySelectorAll('.testament-header');
+            
+            // Loop through each testament
+            testamentHeaders.forEach(header => {
+                const testamentContent = header.nextElementSibling;
+                // Initially ensure testament content is visible
+                header.classList.remove('collapsed');
+                testamentContent.style.display = 'block'; 
+            });
+
+            // Get all category headers
+            const categoryHeaders = document.querySelectorAll('.category-header');
+            
+            // Loop through each category
+            categoryHeaders.forEach(header => {
+                const bookList = header.nextElementSibling;
+                // Initially collapse all category content
+                header.parentElement.classList.add('collapsed');
+                bookList.style.display = 'none'; 
+            });
+        });
+    </script>
+</body>
+</html>
